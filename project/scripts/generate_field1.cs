@@ -43,7 +43,7 @@ public class generate_field1 : MonoBehaviour
     private void CreateHexPrefabs()
     {
         // Вычисляем высоту одного гекса
-        float hexHeight = hexSize * 0.6f; // Высота гекса с учетом смещения
+        float hexHeight = hexSize * 0.575f; // Высота гекса с учетом смещения
         float hexWidth = hexSize; // Ширина гекса
 
         for (int x = 0; x < width; x++)
