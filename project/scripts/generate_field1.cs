@@ -12,8 +12,11 @@ public class generate_field1 : MonoBehaviour
     public int seed = 12345; // Сид для генерации
     private int[,] hexGrid; // Двумерный массив для хранения индексов префабов
 
+    private Perlin2D perlin; // Экземпляр Perlin2D
+
     private void Start()
     {
+        perlin = new Perlin2D(seed); // Инициализация Perlin2D с заданным сидом
         GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
     }
 
@@ -30,12 +33,22 @@ public class generate_field1 : MonoBehaviour
         // Инициализация массива
         hexGrid = new int[width, height];
 
-        // Заполнение массива случайными индексами префабов
+        // Заполнение массива значениями на основе Perlin-шума
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                hexGrid[x, y] = Random.Range(0, hexPrefabs.Count); // Генерация случайного индекса
+                // Генерация значения шума
+                float noiseValue = perlin.Noise(x * 0.1f, y * 0.1f);
+                
+                // Нормализуем значение шума в диапазоне от 0 до 1
+                float normalizedValue = (noiseValue + 1) / 2; // Преобразуем значение в диапазон [0, 1]
+
+                // Вычисляем индекс префаба на основе нормализованного значения
+                int prefabIndex = Mathf.FloorToInt(normalizedValue * (hexPrefabs.Count - 1)); // Индекс от 0 до Count-1
+
+                // Сохраняем индекс префаба в массив
+                hexGrid[x, y] = prefabIndex;
             }
         }
     }
