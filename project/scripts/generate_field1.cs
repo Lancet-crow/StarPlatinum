@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 
 public class generate_field1 : MonoBehaviour
 {
@@ -9,15 +11,28 @@ public class generate_field1 : MonoBehaviour
     public int width = 10; // Количество гексов по ширине
     public int height = 10; // Количество гексов по высоте
     public float hexSize = 128f; // Размер одного гекса в пикселях
-    public int seed = 12345; // Сид для генерации
+    private int seed = 0; // Сид для генерации
+    public bool RandomSeed = false;
     private int[,] hexGrid; // Двумерный массив для хранения индексов префабов
 
     private Perlin2D perlin; // Экземпляр Perlin2D
 
+    public TextMeshProUGUI seed_text;
+
     private void Start()
     {
+        seed = MainMenu.worldKey;
+        if (RandomSeed || seed==0)
+        {
+            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        Debug.Log("Start with seed = " + seed);
         perlin = new Perlin2D(seed); // Инициализация Perlin2D с заданным сидом
         GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
+        if (seed_text != null)
+        {
+            seed_text.text = seed.ToString();
+        }
     }
 
     private void GenerateFieldWithSeed(int seed)

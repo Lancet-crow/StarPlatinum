@@ -6,28 +6,82 @@ public class TileSelect : MonoBehaviour
 {
     public GameObject hoverPrefab; // Префаб, который будет отображаться при наведении
     private GameObject currentHover; // Текущий экземпляр префаба
+    public GameObject NewPrefab; //на что заменять
+    private GameObject me;
+    public GameObject camera;
+
+    public bool Select = false;
+
+    public void Start()
+    {
+        me = gameObject;
+        camera = GameObject.FindGameObjectsWithTag("MainCamera")[0];
+    }
 
     private void OnMouseEnter()
     {
-        // Проверяем, если текущий экземпляр не установлен
-        if (currentHover == null)
+        if (currentHover == null && camera.GetComponent<MainMenu>() == null)
         {
-            // Создаем экземпляр префаба на позиции тайла
             currentHover = Instantiate(hoverPrefab, transform.position, Quaternion.identity);
-            // Убедимся, что он находится на правильном слое (например, выше тайлов)
             currentHover.transform.SetParent(transform);
             currentHover.transform.position = new Vector3(currentHover.transform.position.x,
                 currentHover.transform.position.y,
-                currentHover.transform.position.z-3);
+                currentHover.transform.position.z - 3);
         }
     }
 
     private void OnMouseExit()
     {
-        // Удаляем префаб, когда курсор уходит
-        if (currentHover != null)
+        if (currentHover != null && camera.GetComponent<MainMenu>() == null)
         {
             Destroy(currentHover);
+            currentHover = null; // Сбрасываем ссылку на текущий префаб
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && currentHover != null && camera.GetComponent<MainMenu>() == null)
+        {
+            StartCoroutine(WaitForMouseRelease());
+        }
+    }
+
+    private IEnumerator WaitForMouseRelease()
+    {
+        while (Input.GetMouseButton(0))
+        {
+            yield return null; // Ждем следующего кадра
+        }
+
+        if (!Select)
+        {
+            if (currentHover != null && (hoverPrefab.CompareTag("BuildSelect") || hoverPrefab.CompareTag("TrueSelect")))
+            {
+                if (hoverPrefab.CompareTag("TrueSelect"))
+                {
+                    Instantiate(NewPrefab, transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, transform.position, Quaternion.identity);
+                }
+                Destroy(me); //"Ты чево наделал..."  *Он испарился*
+                currentHover = null; // Сбрасываем ссылку на текущий префаб
+
+            }
+            
+            else
+            {
+                Debug.LogError("Не удалось загрузить префаб :/");
+            }
+        }
+        else
+        {
+            if (currentHover != null)
+            {
+                camera.GetComponent<CameraScript>().ReplasePrefab = NewPrefab;
+            }
         }
     }
 }
