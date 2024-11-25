@@ -15,15 +15,17 @@ public class StringToNumberConverter
     }
     public static int ConvertStringToNumbers(string input)
     {
+        byte f = 0;
         StringBuilder result = new StringBuilder();
-        Debug.Log('"'+input+'"'+ input == ""+' '+input.Length+' '+string.IsNullOrEmpty(input));
         if (input == "")
         {
-            Debug.Log(1223334444);
             input = " ";
         }
-        Debug.Log(12312313123123123131);
-        for (int i = 0; i < input.Length - 1; i++)
+        if (input[0] == '-' && input.Length>2)
+        {
+            f = 1;
+        }
+        for (int i = f; i < input.Length - 1; i++)
         {
             char c = input[i];
             if (char.IsDigit(c))
@@ -43,6 +45,10 @@ public class StringToNumberConverter
         BigInteger res = BigInteger.Parse(result.ToString());
         //Debug.Log(res);
         int resultat = ConvertBigIntegerToInt(res);
+        if (f == 1)
+        {
+            resultat = resultat * -1;
+        }
 
         // Преобразуем строку в BigInteger
         return resultat;

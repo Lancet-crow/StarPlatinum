@@ -7,13 +7,22 @@ using TMPro;
 public class generate_field1 : MonoBehaviour
 {
     public List<GameObject> hexPrefabs; // Список префабов гексов
-    public Transform me;
+    private Transform me;
     public int width = 10; // Количество гексов по ширине
     public int height = 10; // Количество гексов по высоте
     public float hexSize = 128f; // Размер одного гекса в пикселях
     private int seed = 0; // Сид для генерации
     public bool RandomSeed = false;
     private int[,] hexGrid; // Двумерный массив для хранения индексов префабов
+    public static int value_tree = 1;
+    public static int value_rock = 1;
+    public static int value_Pb = 1;
+    public static int value_ice = 1;
+    public static int value_water = 1;
+    public static int value_emptiness = 1;
+
+    public int oct = 2;
+    public float pers = 0.5f;
 
     private Perlin2D perlin; // Экземпляр Perlin2D
 
@@ -21,14 +30,66 @@ public class generate_field1 : MonoBehaviour
 
     private void Start()
     {
+        // Инициализация трансформации
+        me = gameObject.transform;
+
+        // Установка сидов
         seed = MainMenu.worldKey;
-        if (RandomSeed || seed==0)
+        if (RandomSeed || seed == 0)
         {
             seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
         Debug.Log("Start with seed = " + seed);
-        perlin = new Perlin2D(seed); // Инициализация Perlin2D с заданным сидом
+
+        // Создание нового списка префабов
+        List<GameObject> expandedHexPrefabs = new List<GameObject>();
+
+        // Дублирование префабов в зависимости от значений
+        foreach (GameObject prefab in hexPrefabs)
+        {
+            int duplicateCount = 0;
+
+            // Определяем, сколько раз дублировать в зависимости от имени префаба
+            if (prefab.name.Contains("tile (0)") || (prefab.name.Contains("tile (4)")))
+            {
+                duplicateCount = value_tree+1;
+            }
+            else if (prefab.name.Contains("tile (1)"))
+            {
+                duplicateCount = value_rock+1;
+            }
+            else if (prefab.name.Contains("tile (10)"))
+            {
+                duplicateCount = value_Pb+1;
+            }
+            else if (prefab.name.Contains("tile (7)")|| prefab.name.Contains("tile (8)"))
+            {
+                duplicateCount = value_ice+1;
+            }
+            else if (prefab.name.Contains("tile (2)") || prefab.name.Contains("tile (9)"))
+            {
+                duplicateCount = value_water+1;
+            }
+            else if (prefab.name.Contains("tile (3)"))
+            {
+                duplicateCount = value_emptiness+1;
+            }
+
+            // Дублируем префаб нужное количество раз
+            for (int i = 0; i < duplicateCount; i++)
+            {
+                expandedHexPrefabs.Add(prefab);
+            }
+        }
+
+        // Присваиваем новый список префабов
+        hexPrefabs = expandedHexPrefabs;
+
+        // Инициализация Perlin2D с заданным сидом
+        perlin = new Perlin2D(seed);
         GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
+
+        // Обновление текста с сидом
         if (seed_text != null)
         {
             seed_text.text = seed.ToString();
@@ -54,8 +115,8 @@ public class generate_field1 : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 // Генерация значения шума
-                float noiseValue = perlin.Noise(x * 0.1f, y * 0.1f);
-                
+                float noiseValue = perlin.Noise(x * 0.1f, y * 0.1f, octaves: oct, persistence: pers);
+
                 // Нормализуем значение шума в диапазоне от 0 до 1
                 float normalizedValue = (noiseValue + 1) / 2; // Преобразуем значение в диапазон [0, 1]
 

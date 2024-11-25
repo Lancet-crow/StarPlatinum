@@ -20,6 +20,7 @@ public class TileSelect : MonoBehaviour
 
     private void OnMouseEnter()
     {
+        camera = GameObject.FindGameObjectsWithTag("MainCamera")[0];
         if (currentHover == null && camera.GetComponent<MainMenu>() == null)
         {
             currentHover = Instantiate(hoverPrefab, transform.position, Quaternion.identity);
@@ -60,20 +61,15 @@ public class TileSelect : MonoBehaviour
             {
                 if (hoverPrefab.CompareTag("TrueSelect"))
                 {
-                    Instantiate(NewPrefab, transform.position, Quaternion.identity);
+                    Instantiate(NewPrefab, me.transform.position, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, transform.position, Quaternion.identity);
+                    Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, me.transform.position, Quaternion.identity);
                 }
                 Destroy(me); //"Ты чево наделал..."  *Он испарился*
                 currentHover = null; // Сбрасываем ссылку на текущий префаб
 
-            }
-            
-            else
-            {
-                Debug.LogError("Не удалось загрузить префаб :/");
             }
         }
         else
