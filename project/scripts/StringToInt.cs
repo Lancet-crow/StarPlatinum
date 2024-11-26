@@ -15,11 +15,16 @@ public class StringToNumberConverter
     }
     public static int ConvertStringToNumbers(string input)
     {
+        if (input.ToString().Length <2)
+        {
+            return UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        Debug.Log(input.ToString().Length);
         byte f = 0;
         StringBuilder result = new StringBuilder();
-        if (input == "")
+        if (input.ToString() == "")
         {
-            input = " ";
+            return UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
         if (input[0] == '-' && input.Length>2)
         {
@@ -41,7 +46,6 @@ public class StringToNumberConverter
             }
             //Debug.Log(result);
         }
-
         BigInteger res = BigInteger.Parse(result.ToString());
         //Debug.Log(res);
         int resultat = ConvertBigIntegerToInt(res);

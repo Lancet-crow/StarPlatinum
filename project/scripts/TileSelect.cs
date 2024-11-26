@@ -63,13 +63,15 @@ public class TileSelect : MonoBehaviour
                 GameObject inst;
                 if (hoverPrefab.CompareTag("TrueSelect"))
                 {
-                    inst = Instantiate(NewPrefab, me.transform.position, Quaternion.identity);
+                    inst = Instantiate(NewPrefab, me.transform.position, Quaternion.identity, GameObject.FindWithTag("Generator").transform);
                 }
                 else
                 {
                     inst = Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, me.transform.position, Quaternion.identity, GameObject.FindWithTag("Generator").transform);
                 }
-                
+                inst.GetComponent<TileSelect>().xpos_list = xpos_list;
+                inst.GetComponent<TileSelect>().ypos_list = ypos_list;
+                //GameObject.FindWithTag("Generator").transform;
                 Destroy(me); //"Ты чево наделал..."  *Он испарился*
                 currentHover = null; // Сбрасываем ссылку на текущий префаб
 

@@ -131,7 +131,7 @@ public class generate_field1 : MonoBehaviour
                 hexGrid[x, y] = prefabIndex;
             }
         }
-        Debug.Log(hexGrid);
+        //Debug.Log(hexGrid);
     }
 
     private void CreateHexPrefabs()

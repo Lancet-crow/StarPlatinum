@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject worldGenerationPanel;
     public GameObject settingsPanel;
+    public GameObject ContinueGamePanel;
 
     public TextMeshProUGUI worldKeyInputField;
     public TextMeshProUGUI usernameInputField;
@@ -27,7 +28,7 @@ public class MainMenu : MonoBehaviour
 
     private string GenerateRandomString(int length)
     {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=+!@#$%^&*()~{}<>";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_!()~{}<>";
         char[] stringChars = new char[length];
         for (int i = 0; i < length; i++)
         {
@@ -60,6 +61,7 @@ public class MainMenu : MonoBehaviour
             mainMenuPanel.SetActive(true);
             worldGenerationPanel.SetActive(false);
             settingsPanel.SetActive(false);
+            ContinueGamePanel.SetActive(false);
         }
     }
 
@@ -67,18 +69,22 @@ public class MainMenu : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         worldGenerationPanel.SetActive(true);
+        ContinueGamePanel.SetActive(false);
+        UpdateInputFieldAndScrollbars();
     }
 
     public void ContinueGame()
     {
-        // Логика продолжения игры
-        Debug.Log("Continue Game");
+        mainMenuPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+        ContinueGamePanel.SetActive(true);
     }
 
     public void OpenSettings()
     {
         mainMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
+        ContinueGamePanel.SetActive(false);
     }
 
     public void ExitGame()
@@ -89,11 +95,14 @@ public class MainMenu : MonoBehaviour
 
     public void StartGameWithWorldKey()
     {
-        Debug.Log(worldKeyInputField.text);
-        worldKey = StringToNumberConverter.ConvertStringToNumbers(worldKeyInputField.text);
-        if (worldKey == 0)
+        Debug.Log(worldKeyInputField.GetParsedText().ToString() != "");
+        if (worldKeyInputField.GetParsedText().ToString() != "")
         {
-            worldKey = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            worldKey = StringToNumberConverter.ConvertStringToNumbers(worldKeyInputField.text);
+        }
+        else
+        {
+            worldKey = StringToNumberConverter.ConvertStringToNumbers(UnityEngine.Random.Range(3, 15).ToString());
         }
         Debug.Log("Starting game with world key: " + worldKey);
 
