@@ -36,6 +36,9 @@ public class generate_field1 : MonoBehaviour
     public int displayWidth = 10; // Количество отображаемых гексов по ширине
     public int displayHeight = 10; // Количество отображаемых гексов по высоте
 
+    private int lastX = -1; // Координаты X в прошлом кадре
+    private int lastY = -1; // Координаты Y в прошлом кадре
+
 
     private Perlin2D perlin; // Экземпляр Perlin2D
 
@@ -81,40 +84,48 @@ public class generate_field1 : MonoBehaviour
         int startX = Mathf.Max(0, Mathf.FloorToInt((cameraPosition.x - transform.position.x + renderOffset.x) / (hexSize * 0.5f)));
         int startY = Mathf.Max(0, Mathf.FloorToInt((cameraPosition.y - transform.position.y + renderOffset.y) / (hexSize * 0.575f)));
 
-        // Удаляем старые гексы
-        foreach (Transform child in transform)
+        // Если индексы гексов изменились по сравнению с прошлым кадром, то:
+        if (startX != lastX || startY != lastY)
         {
-            Destroy(child.gameObject);
-        }
-
-        // Создаем новые гексы в видимой области
-        for (int x = startX; x < startX + displayWidth; x++)
-        {
-            for (int y = startY; y < startY + displayHeight; y++)
+            // Удаляем старые гексы
+            foreach (Transform child in transform)
             {
-                // Проверяем, чтобы не выйти за границы массива
-                if (x >= width || y >= height)
-                    continue;
-
-                // Получаем индекс префаба из массива
-                int prefabIndex = hexGrid[x, y];
-
-                // Вычисляем позицию гекса
-                float posX = x * hexSize * 0.5f + transform.position.x + renderOffset.x;
-                float posY = y * hexSize * 0.575f + transform.position.y + renderOffset.y;
-
-                // Смещение для четных рядов
-                if (x % 2 == 1)
-                {
-                    posY += hexSize * 0.575f * 0.5f; // Смещение для нечетных столбцов
-                }
-
-                // Создаем экземпляр гекса
-                Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
-                GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
-                hexInstance.GetComponent<TileSelect>().xpos_list = x;
-                hexInstance.GetComponent<TileSelect>().ypos_list = y;
+                Destroy(child.gameObject);
             }
+
+            // Создаем новые гексы в видимой области
+            for (int x = startX; x < startX + displayWidth; x++)
+            {
+                for (int y = startY; y < startY + displayHeight; y++)
+                {
+                    // Проверяем, чтобы не выйти за границы массива
+                    if (x >= width || y >= height)
+                        continue;
+
+                    // Получаем индекс префаба из массива
+                    int prefabIndex = hexGrid[x, y];
+
+                    // Вычисляем позицию гекса
+                    float posX = x * hexSize * 0.5f + transform.position.x + renderOffset.x;
+                    float posY = y * hexSize * 0.575f + transform.position.y + renderOffset.y;
+
+                    // Смещение для четных рядов
+                    if (x % 2 == 1)
+                    {
+                        posY += hexSize * 0.575f * 0.5f; // Смещение для нечетных столбцов
+                    }
+
+                    // Создаем экземпляр гекса
+                    Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
+                    GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
+                    hexInstance.GetComponent<TileSelect>().xpos_list = x;
+                    hexInstance.GetComponent<TileSelect>().ypos_list = y;
+                }
+            }
+
+            // Фиксируем значения старта на этот кадр
+            lastX = startX;
+            lastY = startY;
         }
     }
 
