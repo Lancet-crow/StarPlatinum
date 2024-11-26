@@ -8447,18 +8447,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexPrefabs:
   - {fileID: 7239384810504048474, guid: 7b56d2652822bd14c816a1d273f3a702, type: 3}
+  - {fileID: 1940945088360512532, guid: 4f047857d431d694d8a40ff8daac02c7, type: 3}
   - {fileID: 4538327891478823125, guid: f5b21a389b85d1e4e9bbf05f8f2ae57a, type: 3}
   - {fileID: 8761349528563585740, guid: 9bdfb714cd948ce48a4a713fdc475292, type: 3}
-  - {fileID: 8761349528563585740, guid: 9bdfb714cd948ce48a4a713fdc475292, type: 3}
+  - {fileID: 5419686272707501322, guid: 36326c664191e2b419410a86a15807dc, type: 3}
+  - {fileID: 2590787928749534978, guid: ec327f1090ebb104f99163eaa4e1e33d, type: 3}
+  - {fileID: 6183921259458826267, guid: 12ed2514058e6fe4f8e96aae1601034b, type: 3}
+  - {fileID: 6258803667468066737, guid: 033035364fb97fe408dc2f465f231ff0, type: 3}
   - {fileID: 3861744156908022202, guid: eb401e44c7655de41a1d38c8c78d36e0, type: 3}
   - {fileID: 5430901233610267076, guid: 03a40f5d361f6644f99f0e9940b0e8b2, type: 3}
   - {fileID: 2765286442892555295, guid: c60a9958bb8f2554bb6397493940836d, type: 3}
-  width: 40
-  height: 30
+  - {fileID: 6016576820918650538, guid: e309739d907ca174aa97e14af405c796, type: 3}
+  width: 50
+  height: 50
   hexSize: 1.4
   RandomSeed: 1
-  oct: 2
-  pers: 0.5
+  oct: 4
+  pers: 0.75
+  renderOffset: {x: -4.4, y: -2.62}
+  displayWidth: 27
+  displayHeight: 15
   seed_text: {fileID: 831054820}
 --- !u!4 &2053725911
 Transform:

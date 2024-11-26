@@ -8,13 +8,18 @@ public class generate_field1 : MonoBehaviour
 {
     public List<GameObject> hexPrefabs; // Список префабов гексов
     private List<GameObject> hexPrefabsEx;
+
     private Transform me;
+
     public int width = 10; // Количество гексов по ширине
     public int height = 10; // Количество гексов по высоте
     public float hexSize = 128f; // Размер одного гекса в пикселях
+
     private int seed = 0; // Сид для генерации
     public bool RandomSeed = false;
+
     private int[,] hexGrid; // Двумерный массив для хранения индексов префабов
+
     public static int value_tree = 1;
     public static int value_rock = 1;
     public static int value_Pb = 1;
@@ -25,14 +30,21 @@ public class generate_field1 : MonoBehaviour
     public int oct = 2;
     public float pers = 0.5f;
 
+    private Camera mainCamera;
+    private int visibleWidth;
+    private int visibleHeight;
+
+    public Vector2 renderOffset; // Смещение начальной точки рендера
+    public int displayWidth = 10; // Количество отображаемых гексов по ширине
+    public int displayHeight = 10; // Количество отображаемых гексов по высоте
+
+
     private Perlin2D perlin; // Экземпляр Perlin2D
 
     public TextMeshProUGUI seed_text;
 
     private void Start()
     {
-        hexPrefabsEx = hexPrefabs;
-        // Инициализация трансформации
         me = gameObject.transform;
 
         // Установка сидов
@@ -44,17 +56,71 @@ public class generate_field1 : MonoBehaviour
         }
         Debug.Log("Start with seed = " + seed);
 
-        // Дублирование префабов в зависимости от значений
         DublicateValue();
 
         // Инициализация Perlin2D с заданным сидом
         perlin = new Perlin2D(seed);
         GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
 
-        // Обновление текста с сидом
-        if (seed_text != null)
+        mainCamera = Camera.main;
+        //CalculateVisibleArea();
+        UpdateVisibleHexes();
+    }
+
+    private void CalculateVisibleArea()
+    {
+        // Получаем размеры камеры в мировых единицах
+        float heightInWorldUnits = 2f * mainCamera.orthographicSize;
+        float widthInWorldUnits = heightInWorldUnits * mainCamera.aspect;
+
+        // Вычисляем количество видимых гексов
+        visibleHeight = Mathf.CeilToInt(heightInWorldUnits / hexSize);
+        visibleWidth = Mathf.CeilToInt(widthInWorldUnits / hexSize);
+    }
+
+    private void UpdateVisibleHexes()
+    {
+        // Получаем позицию камеры
+        Vector3 cameraPosition = mainCamera.transform.position;
+
+        // Вычисляем начальные индексы для отображаемых гексов с учетом смещения
+        int startX = Mathf.Max(0, Mathf.FloorToInt((cameraPosition.x - transform.position.x + renderOffset.x) / (hexSize * 0.5f)));
+        int startY = Mathf.Max(0, Mathf.FloorToInt((cameraPosition.y - transform.position.y + renderOffset.y) / (hexSize * 0.575f)));
+
+        // Удаляем старые гексы
+        foreach (Transform child in transform)
         {
-            seed_text.text = seed.ToString();
+            Destroy(child.gameObject);
+        }
+
+        // Создаем новые гексы в видимой области
+        for (int x = startX; x < startX + displayWidth; x++)
+        {
+            for (int y = startY; y < startY + displayHeight; y++)
+            {
+                // Проверяем, чтобы не выйти за границы массива
+                if (x >= width || y >= height)
+                    continue;
+
+                // Получаем индекс префаба из массива
+                int prefabIndex = hexGrid[x, y];
+
+                // Вычисляем позицию гекса
+                float posX = x * hexSize * 0.5f + transform.position.x + renderOffset.x;
+                float posY = y * hexSize * 0.575f + transform.position.y + renderOffset.y;
+
+                // Смещение для четных рядов
+                if (x % 2 == 1)
+                {
+                    posY += hexSize * 0.575f * 0.5f; // Смещение для нечетных столбцов
+                }
+
+                // Создаем экземпляр гекса
+                Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
+                GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
+                hexInstance.GetComponent<TileSelect>().xpos_list = x;
+                hexInstance.GetComponent<TileSelect>().ypos_list = y;
+            }
         }
     }
 
@@ -131,44 +197,10 @@ public class generate_field1 : MonoBehaviour
                 hexGrid[x, y] = prefabIndex;
             }
         }
-        //Debug.Log(hexGrid);
-    }
-
-    private void CreateHexPrefabs()
-    {
-        // Вычисляем высоту одного гекса
-        float hexHeight = hexSize * 0.575f; // Высота гекса с учетом смещения
-        float hexWidth = hexSize; // Ширина гекса
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                // Вычисляем позицию гекса
-                float posX = x * hexWidth * 0.5f + me.position.x; // Позиция по X
-                float posY = y * hexHeight + me.position.y; // Позиция по Y
-
-                // Смещение для четных рядов
-                if (x % 2 == 1)
-                {
-                    posY += hexHeight * 0.5f; // Смещение для нечетных столбцов
-                }
-
-                // Получаем индекс префаба из массива
-                int prefabIndex = hexGrid[x, y];
-
-                // Создаем экземпляр гекса
-                Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
-                GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
-                hexInstance.GetComponent<TileSelect>().xpos_list = x;
-                hexInstance.GetComponent<TileSelect>().ypos_list = y;
-            }
-        }
-        
     }
 
     private void Update()
     {
-        
+        UpdateVisibleHexes();
     }
 }
