@@ -40,6 +40,7 @@ public class generate_field1 : MonoBehaviour
     private Perlin2D perlin; // έκηεμολÿπ Perlin2D
 
     public TextMeshProUGUI seed_text;
+    public TextMeshProUGUI seed_save;
 
     private void Start()
     {
@@ -53,6 +54,12 @@ public class generate_field1 : MonoBehaviour
             GameObject.FindWithTag("MainCamera").GetComponent<MainMenu>().UpdateInputFieldAndScrollbars();
         }
         Debug.Log("Start with seed = " + seed);
+
+        if (seed_text != null)
+        {
+            seed_text.text = seed.ToString();
+            seed_save.text = seed.ToString()+'|'+value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString()+'|';
+        }
 
         DublicateValue();
 
@@ -187,7 +194,6 @@ public class generate_field1 : MonoBehaviour
 
     private void Update()
     {
-        
         UpdateVisibleHexes();
     }
 }

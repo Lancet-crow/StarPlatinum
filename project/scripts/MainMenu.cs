@@ -12,9 +12,11 @@ public class MainMenu : MonoBehaviour
     public GameObject worldGenerationPanel;
     public GameObject settingsPanel;
     public GameObject ContinueGamePanel;
+    public GameObject Loading;
 
     public TextMeshProUGUI worldKeyInputField;
     public TextMeshProUGUI usernameInputField;
+    public TextMeshProUGUI loadInputField;
     public Dropdown languageDropdown;
 
     public List<GameObject> scrollbars;
@@ -62,6 +64,7 @@ public class MainMenu : MonoBehaviour
             worldGenerationPanel.SetActive(false);
             settingsPanel.SetActive(false);
             ContinueGamePanel.SetActive(false);
+            Loading.SetActive(false);
         }
     }
 
@@ -70,6 +73,7 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.SetActive(false);
         worldGenerationPanel.SetActive(true);
         ContinueGamePanel.SetActive(false);
+        Loading.SetActive(false);
         UpdateInputFieldAndScrollbars();
     }
 
@@ -78,6 +82,7 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.SetActive(false);
         settingsPanel.SetActive(false);
         ContinueGamePanel.SetActive(true);
+        Loading.SetActive(false);
     }
 
     public void OpenSettings()
@@ -85,6 +90,7 @@ public class MainMenu : MonoBehaviour
         mainMenuPanel.SetActive(false);
         settingsPanel.SetActive(true);
         ContinueGamePanel.SetActive(false);
+        Loading.SetActive(false);
     }
 
     public void ExitGame()
@@ -95,6 +101,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGameWithWorldKey()
     {
+        Loading.SetActive(true);
         Debug.Log(worldKeyInputField.GetParsedText().ToString() != "");
         if (worldKeyInputField.GetParsedText().ToString() != "")
         {
@@ -109,6 +116,21 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("TestPlanet");
     }
 
+    public void LoadGame()
+    {
+        Loading.SetActive(true);
+        worldKey = int.Parse(loadInputField.text.Split('|')[0]);
+        generate_field1.value_tree = int.Parse(loadInputField.text.Split('|')[1]);
+        generate_field1.value_rock = int.Parse(loadInputField.text.Split('|')[2]);
+        generate_field1.value_Pb = int.Parse(loadInputField.text.Split('|')[3]);
+        generate_field1.value_ice = int.Parse(loadInputField.text.Split('|')[4]);
+        generate_field1.value_water = int.Parse(loadInputField.text.Split('|')[5]);
+        generate_field1.value_emptiness = int.Parse(loadInputField.text.Split('|')[6]);
+        Debug.Log("Starting game with world key: " + worldKey);
+
+        SceneManager.LoadScene("TestPlanet");
+    }
+
     public void ExitToMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
@@ -117,6 +139,7 @@ public class MainMenu : MonoBehaviour
     public void CancelWorldGeneration()
     {
         worldGenerationPanel.SetActive(false);
+        Loading.SetActive(false);
         ShowMainMenu();
     }
 
