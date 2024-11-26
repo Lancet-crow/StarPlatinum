@@ -31,8 +31,6 @@ public class generate_field1 : MonoBehaviour
     public float pers = 0.5f;
 
     private Camera mainCamera;
-    private int visibleWidth;
-    private int visibleHeight;
 
     public Vector2 renderOffset; // Смещение начальной точки рендера
     public int displayWidth = 10; // Количество отображаемых гексов по ширине
@@ -65,17 +63,6 @@ public class generate_field1 : MonoBehaviour
         mainCamera = Camera.main;
         //CalculateVisibleArea();
         UpdateVisibleHexes();
-    }
-
-    private void CalculateVisibleArea()
-    {
-        // Получаем размеры камеры в мировых единицах
-        float heightInWorldUnits = 2f * mainCamera.orthographicSize;
-        float widthInWorldUnits = heightInWorldUnits * mainCamera.aspect;
-
-        // Вычисляем количество видимых гексов
-        visibleHeight = Mathf.CeilToInt(heightInWorldUnits / hexSize);
-        visibleWidth = Mathf.CeilToInt(widthInWorldUnits / hexSize);
     }
 
     private void UpdateVisibleHexes()
@@ -154,7 +141,7 @@ public class generate_field1 : MonoBehaviour
             }
             else if (prefab.name.Contains("tile (3)"))
             {
-                duplicateCount = value_emptiness * 2 + 1;
+                duplicateCount = value_emptiness + 1;
             }
 
             // Дублируем префаб нужное количество раз
@@ -171,7 +158,6 @@ public class generate_field1 : MonoBehaviour
         Random.InitState(seed); // Инициализация генератора случайных чисел
 
         CreateHexGrid(); // Создаем массив индексов
-        CreateHexPrefabs(); // Создаем префабы на основе массива
     }
 
     private void CreateHexGrid()
@@ -201,6 +187,7 @@ public class generate_field1 : MonoBehaviour
 
     private void Update()
     {
+        
         UpdateVisibleHexes();
     }
 }

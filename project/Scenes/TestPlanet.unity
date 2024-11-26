@@ -295,8 +295,8 @@ MonoBehaviour:
   - {fileID: 3861744156908022202, guid: eb401e44c7655de41a1d38c8c78d36e0, type: 3}
   - {fileID: 5430901233610267076, guid: 03a40f5d361f6644f99f0e9940b0e8b2, type: 3}
   - {fileID: 2765286442892555295, guid: c60a9958bb8f2554bb6397493940836d, type: 3}
-  width: 200
-  height: 150
+  width: 2000
+  height: 1500
   hexSize: 1.4
   RandomSeed: 0
   oct: 2
