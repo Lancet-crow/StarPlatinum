@@ -7,6 +7,7 @@ using TMPro;
 public class generate_field1 : MonoBehaviour
 {
     public List<GameObject> hexPrefabs; // Список префабов гексов
+    private List<GameObject> hexPrefabsEx;
     private Transform me;
     public int width = 10; // Количество гексов по ширине
     public int height = 10; // Количество гексов по высоте
@@ -30,6 +31,7 @@ public class generate_field1 : MonoBehaviour
 
     private void Start()
     {
+        hexPrefabsEx = hexPrefabs;
         // Инициализация трансформации
         me = gameObject.transform;
 
@@ -38,52 +40,12 @@ public class generate_field1 : MonoBehaviour
         if (RandomSeed || seed == 0)
         {
             seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            GameObject.FindWithTag("MainCamera").GetComponent<MainMenu>().UpdateInputFieldAndScrollbars();
         }
         Debug.Log("Start with seed = " + seed);
 
-        // Создание нового списка префабов
-        List<GameObject> expandedHexPrefabs = new List<GameObject>();
-
         // Дублирование префабов в зависимости от значений
-        foreach (GameObject prefab in hexPrefabs)
-        {
-            int duplicateCount = 0;
-
-            // Определяем, сколько раз дублировать в зависимости от имени префаба
-            if (prefab.name.Contains("tile (0)") || (prefab.name.Contains("tile (4)")))
-            {
-                duplicateCount = value_tree+1;
-            }
-            else if (prefab.name.Contains("tile (1)"))
-            {
-                duplicateCount = value_rock+1;
-            }
-            else if (prefab.name.Contains("tile (10)"))
-            {
-                duplicateCount = value_Pb+1;
-            }
-            else if (prefab.name.Contains("tile (7)")|| prefab.name.Contains("tile (8)"))
-            {
-                duplicateCount = value_ice+1;
-            }
-            else if (prefab.name.Contains("tile (2)") || prefab.name.Contains("tile (9)"))
-            {
-                duplicateCount = value_water+1;
-            }
-            else if (prefab.name.Contains("tile (3)"))
-            {
-                duplicateCount = value_emptiness+1;
-            }
-
-            // Дублируем префаб нужное количество раз
-            for (int i = 0; i < duplicateCount; i++)
-            {
-                expandedHexPrefabs.Add(prefab);
-            }
-        }
-
-        // Присваиваем новый список префабов
-        hexPrefabs = expandedHexPrefabs;
+        DublicateValue();
 
         // Инициализация Perlin2D с заданным сидом
         perlin = new Perlin2D(seed);
@@ -94,6 +56,48 @@ public class generate_field1 : MonoBehaviour
         {
             seed_text.text = seed.ToString();
         }
+    }
+
+    public void DublicateValue()
+    {
+        List<GameObject> expandedHexPrefabs = new List<GameObject>();
+        foreach (GameObject prefab in hexPrefabs)
+        {
+            int duplicateCount = 0;
+
+            // Определяем, сколько раз дублировать в зависимости от имени префаба
+            if (prefab.name.Contains("tile (0)") || (prefab.name.Contains("tile (4)")))
+            {
+                duplicateCount = value_tree + 1;
+            }
+            else if (prefab.name.Contains("tile (1)"))
+            {
+                duplicateCount = value_rock + 1;
+            }
+            else if (prefab.name.Contains("tile (10)"))
+            {
+                duplicateCount = value_Pb + 1;
+            }
+            else if (prefab.name.Contains("tile (7)") || prefab.name.Contains("tile (8)"))
+            {
+                duplicateCount = value_ice + 1;
+            }
+            else if (prefab.name.Contains("tile (2)") || prefab.name.Contains("tile (9)"))
+            {
+                duplicateCount = value_water + 1;
+            }
+            else if (prefab.name.Contains("tile (3)"))
+            {
+                duplicateCount = value_emptiness * 2 + 1;
+            }
+
+            // Дублируем префаб нужное количество раз
+            for (int i = 0; i < duplicateCount; i++)
+            {
+                expandedHexPrefabs.Add(prefab);
+            }
+        }
+        hexPrefabs = expandedHexPrefabs;
     }
 
     private void GenerateFieldWithSeed(int seed)
@@ -127,6 +131,7 @@ public class generate_field1 : MonoBehaviour
                 hexGrid[x, y] = prefabIndex;
             }
         }
+        Debug.Log(hexGrid);
     }
 
     private void CreateHexPrefabs()
@@ -155,7 +160,15 @@ public class generate_field1 : MonoBehaviour
                 // Создаем экземпляр гекса
                 Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
                 GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
+                hexInstance.GetComponent<TileSelect>().xpos_list = x;
+                hexInstance.GetComponent<TileSelect>().ypos_list = y;
             }
         }
+        
+    }
+
+    private void Update()
+    {
+        
     }
 }

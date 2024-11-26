@@ -9,6 +9,7 @@ public class TileSelect : MonoBehaviour
     public GameObject NewPrefab; //на что заменять
     private GameObject me;
     public GameObject camera;
+    public int xpos_list, ypos_list;
 
     public bool Select = false;
 
@@ -59,14 +60,16 @@ public class TileSelect : MonoBehaviour
         {
             if (currentHover != null && (hoverPrefab.CompareTag("BuildSelect") || hoverPrefab.CompareTag("TrueSelect")))
             {
+                GameObject inst;
                 if (hoverPrefab.CompareTag("TrueSelect"))
                 {
-                    Instantiate(NewPrefab, me.transform.position, Quaternion.identity);
+                    inst = Instantiate(NewPrefab, me.transform.position, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, me.transform.position, Quaternion.identity);
+                    inst = Instantiate(camera.GetComponent<CameraScript>().ReplasePrefab, me.transform.position, Quaternion.identity, GameObject.FindWithTag("Generator").transform);
                 }
+                
                 Destroy(me); //"Ты чево наделал..."  *Он испарился*
                 currentHover = null; // Сбрасываем ссылку на текущий префаб
 
