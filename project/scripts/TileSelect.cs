@@ -73,8 +73,11 @@ public class TileSelect : MonoBehaviour
                 }
                 inst.GetComponent<TileSelect>().xpos_list = xpos_list;
                 inst.GetComponent<TileSelect>().ypos_list = ypos_list;
+                Debug.Log(gen.hexGrid[xpos_list, ypos_list]);
                 inst.GetComponent<TileSelect>().num = gen.FindIndexByName(inst.name.Replace("(Clone)", ""));
                 gen.hexGrid[xpos_list, ypos_list] = inst.GetComponent<TileSelect>().num;
+                GameObject.FindGameObjectWithTag("Generator").GetComponent<generate_field1>().SaveAndExit();
+                Debug.Log(gen.hexGrid[xpos_list, ypos_list]);
                 //GameObject.FindWithTag("Generator").transform;
                 Destroy(me); //"Ты чево наделал..."  *Он испарился*
                 currentHover = null; // Сбрасываем ссылку на текущий префаб

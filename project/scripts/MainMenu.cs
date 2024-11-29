@@ -21,7 +21,7 @@ public class MainMenu : MonoBehaviour
 
     public List<GameObject> scrollbars;
 
-    public static int worldKey = 0;
+    public static string worldKey = "";
 
     void Start()
     {
@@ -105,12 +105,13 @@ public class MainMenu : MonoBehaviour
         Debug.Log(worldKeyInputField.GetParsedText().ToString() != "");
         if (worldKeyInputField.GetParsedText().ToString() != "")
         {
-            worldKey = StringToNumberConverter.ConvertStringToNumbers(worldKeyInputField.text);
+            worldKey = StringToNumberConverter.ConvertStringToNumbers(worldKeyInputField.text).ToString();
         }
         else
         {
-            worldKey = StringToNumberConverter.ConvertStringToNumbers(UnityEngine.Random.Range(3, 15).ToString());
+            worldKey = StringToNumberConverter.ConvertStringToNumbers(UnityEngine.Random.Range(3, 15).ToString()).ToString();
         }
+        worldKey+= +'|' + generate_field1.value_tree.ToString() + '|' + generate_field1.value_rock.ToString() + '|' + generate_field1.value_Pb.ToString() + '|' + generate_field1.value_ice.ToString() + '|' + generate_field1.value_water.ToString() + '|' + generate_field1.value_emptiness.ToString() + '|';
         Debug.Log("Starting game with world key: " + worldKey);
 
         SceneManager.LoadScene("TestPlanet");
@@ -119,14 +120,7 @@ public class MainMenu : MonoBehaviour
     public void LoadGame()
     {
         Loading.SetActive(true);
-        worldKey = int.Parse(loadInputField.text.Split('|')[0]);
-        generate_field1.value_tree = int.Parse(loadInputField.text.Split('|')[1]);
-        generate_field1.value_rock = int.Parse(loadInputField.text.Split('|')[2]);
-        generate_field1.value_Pb = int.Parse(loadInputField.text.Split('|')[3]);
-        generate_field1.value_ice = int.Parse(loadInputField.text.Split('|')[4]);
-        generate_field1.value_water = int.Parse(loadInputField.text.Split('|')[5]);
-        generate_field1.value_emptiness = int.Parse(loadInputField.text.Split('|')[6]);
-        Debug.Log("Starting game with world key: " + worldKey);
+        //generate_field1.DecodeSaveCode(loadInputField.text);
 
         SceneManager.LoadScene("TestPlanet");
     }

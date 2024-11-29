@@ -50,6 +50,8 @@ public class generate_field1 : MonoBehaviour
 
     private void Start()
     {
+        hexGrid = new int[width, height];
+        hexGridEx = new int[width, height];
         me = gameObject.transform;
 
         // Установка сидов
@@ -66,17 +68,32 @@ public class generate_field1 : MonoBehaviour
             seed_text.text = seed.ToString();
             SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
             seed_save.text = SaveCode;
+            Debug.Log("SaveCode:"+SaveCode);
         }
 
         DublicateValue();
 
         // Инициализация Perlin2D с заданным сидом
         perlin = new Perlin2D(seed);
-        GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
+        //GenerateFieldWithSeed(seed); // Генерация поля с заданным сидом
 
         mainCamera = Camera.main;
+
+        DecodeSaveCode();
         //CalculateVisibleArea();
         UpdateVisibleHexes();
+    }
+
+    public void DecodeSaveCode(string save_code)
+    {
+        seed = int.Parse(save_code.Split('|')[0]);
+        generate_field1.value_tree = int.Parse(save_code.Split('|')[1]);
+        generate_field1.value_rock = int.Parse(save_code.Split('|')[2]);
+        generate_field1.value_Pb = int.Parse(save_code.Split('|')[3]);
+        generate_field1.value_ice = int.Parse(save_code.Split('|')[4]);
+        generate_field1.value_water = int.Parse(save_code.Split('|')[5]);
+        generate_field1.value_emptiness = int.Parse(save_code.Split('|')[6]);
+        //Debug.Log("Starting game with world key: " + MainMenu.worldKey);
     }
 
     private void UpdateVisibleHexes()
@@ -107,6 +124,7 @@ public class generate_field1 : MonoBehaviour
                         continue;
 
                     // Получаем индекс префаба из массива
+                    //Debug.Log(hexGrid[x, y]);
                     int prefabIndex = hexGrid[x, y];
 
                     // Вычисляем позицию гекса
@@ -189,10 +207,10 @@ public class generate_field1 : MonoBehaviour
         return hexPrefabsEx.FindIndex(obj => obj.name.Equals(name, System.StringComparison.OrdinalIgnoreCase));
     }
 
-    private void CreateHexGrid(int[,] hexGrid)
+    private void CreateHexGrid(int [,] hexGrid)
     {
         // Инициализация массива
-        hexGrid = new int[width, height];
+        //hexGrid = new int[width, height];
 
         // Заполнение массива значениями на основе Perlin-шума
         for (int x = 0; x < width; x++)
@@ -216,6 +234,8 @@ public class generate_field1 : MonoBehaviour
 
     public void SaveAndExit()
     {
+        //Debug.Log(hexGrid[0, 0].ToString() + '_' + hexGridEx[0, 0].ToString());
+        SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -223,10 +243,15 @@ public class generate_field1 : MonoBehaviour
                 if (hexGrid[x, y]!=hexGridEx[x, y])
                 {
                     SaveCode += hexGrid[x, y].ToString()+'_'+x.ToString()+'_'+y.ToString()+';';
+                    //Debug.Log("SaveCode before update: " + SaveCode);
+                    //Debug.Log(SaveCode);
                 }
+                //Debug.Log("SaveCode before update: " + SaveCode);
+
             }
         }
         seed_save.text = SaveCode;
+        Debug.Log("Save panel update");
     }
 
     private void Update()
