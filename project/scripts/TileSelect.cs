@@ -9,12 +9,14 @@ public class TileSelect : MonoBehaviour
     public GameObject NewPrefab; //на что заменять
     private GameObject me;
     public GameObject camera;
-    public int xpos_list, ypos_list;
+    public int xpos_list, ypos_list, num;
+    private generate_field1 gen;
 
     public bool Select = false;
 
     public void Start()
     {
+        gen = GameObject.FindGameObjectWithTag("Generator").GetComponent<generate_field1>();
         me = gameObject;
         camera = GameObject.FindGameObjectsWithTag("MainCamera")[0];
     }
@@ -71,6 +73,8 @@ public class TileSelect : MonoBehaviour
                 }
                 inst.GetComponent<TileSelect>().xpos_list = xpos_list;
                 inst.GetComponent<TileSelect>().ypos_list = ypos_list;
+                inst.GetComponent<TileSelect>().num = gen.FindIndexByName(inst.name.Replace("(Clone)", ""));
+                gen.hexGrid[xpos_list, ypos_list] = inst.GetComponent<TileSelect>().num;
                 //GameObject.FindWithTag("Generator").transform;
                 Destroy(me); //"Ты чево наделал..."  *Он испарился*
                 currentHover = null; // Сбрасываем ссылку на текущий префаб

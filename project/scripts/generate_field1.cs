@@ -7,7 +7,7 @@ using TMPro;
 public class generate_field1 : MonoBehaviour
 {
     public List<GameObject> hexPrefabs; // Список префабов гексов
-    private List<GameObject> hexPrefabsEx;
+    public List<GameObject> hexPrefabsEx;
 
     private Transform me;
 
@@ -18,7 +18,8 @@ public class generate_field1 : MonoBehaviour
     private int seed = 0; // Сид для генерации
     public bool RandomSeed = false;
 
-    private int[,] hexGrid; // Двумерный массив для хранения индексов префабов
+    public int[,] hexGrid; // Двумерный массив для хранения индексов префабов
+    public int[,] hexGridEx; // Двумерный массив для хранения индексов префабов
 
     public static int value_tree = 1;
     public static int value_rock = 1;
@@ -26,6 +27,8 @@ public class generate_field1 : MonoBehaviour
     public static int value_ice = 1;
     public static int value_water = 1;
     public static int value_emptiness = 1;
+
+    public string SaveCode;
 
     public int oct = 2;
     public float pers = 0.5f;
@@ -61,7 +64,8 @@ public class generate_field1 : MonoBehaviour
         if (seed_text != null)
         {
             seed_text.text = seed.ToString();
-            seed_save.text = seed.ToString()+'|'+value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString()+'|';
+            SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
+            seed_save.text = SaveCode;
         }
 
         DublicateValue();
@@ -117,9 +121,10 @@ public class generate_field1 : MonoBehaviour
 
                     // Создаем экземпляр гекса
                     Vector3 hexPosition = new Vector3(posX, posY, y + (x % 2) * 0.5f);
-                    GameObject hexInstance = Instantiate(hexPrefabs[prefabIndex], hexPosition, Quaternion.identity, transform);
+                    GameObject hexInstance = Instantiate(hexPrefabsEx[prefabIndex], hexPosition, Quaternion.identity, transform);
                     hexInstance.GetComponent<TileSelect>().xpos_list = x;
                     hexInstance.GetComponent<TileSelect>().ypos_list = y;
+                    hexInstance.GetComponent<TileSelect>().num = prefabIndex;
                 }
             }
 
@@ -175,10 +180,16 @@ public class generate_field1 : MonoBehaviour
     {
         Random.InitState(seed); // Инициализация генератора случайных чисел
 
-        CreateHexGrid(); // Создаем массив индексов
+        CreateHexGrid(hexGrid); // Создаем массив индексов
+        CreateHexGrid(hexGridEx); // Создаем массив индексов
     }
 
-    private void CreateHexGrid()
+    public int FindIndexByName(string name)
+    {
+        return hexPrefabsEx.FindIndex(obj => obj.name.Equals(name, System.StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void CreateHexGrid(int[,] hexGrid)
     {
         // Инициализация массива
         hexGrid = new int[width, height];
@@ -198,9 +209,24 @@ public class generate_field1 : MonoBehaviour
                 int prefabIndex = Mathf.FloorToInt(normalizedValue * (hexPrefabs.Count - 1)); // Индекс от 0 до Count-1
 
                 // Сохраняем индекс префаба в массив
-                hexGrid[x, y] = prefabIndex;
+                hexGrid[x, y] = FindIndexByName(hexPrefabs[prefabIndex].name);
             }
         }
+    }
+
+    public void SaveAndExit()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (hexGrid[x, y]!=hexGridEx[x, y])
+                {
+                    SaveCode += hexGrid[x, y].ToString()+'_'+x.ToString()+'_'+y.ToString()+';';
+                }
+            }
+        }
+        seed_save.text = SaveCode;
     }
 
     private void Update()
