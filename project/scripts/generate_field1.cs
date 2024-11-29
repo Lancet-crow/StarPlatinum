@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 
 public class generate_field1 : MonoBehaviour
@@ -48,28 +49,14 @@ public class generate_field1 : MonoBehaviour
     public TextMeshProUGUI seed_text;
     public TextMeshProUGUI seed_save;
 
-    private void Start()
+    private void Awake()
     {
         hexGrid = new int[width, height];
         hexGridEx = new int[width, height];
         me = gameObject.transform;
 
         // Установка сидов
-        seed = MainMenu.worldKey;
-        if (RandomSeed || seed == 0)
-        {
-            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            GameObject.FindWithTag("MainCamera").GetComponent<MainMenu>().UpdateInputFieldAndScrollbars();
-        }
-        Debug.Log("Start with seed = " + seed);
-
-        if (seed_text != null)
-        {
-            seed_text.text = seed.ToString();
-            SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
-            seed_save.text = SaveCode;
-            Debug.Log("SaveCode:"+SaveCode);
-        }
+        //seed = MainMenu.worldKey;
 
         DublicateValue();
 
@@ -81,19 +68,37 @@ public class generate_field1 : MonoBehaviour
 
         DecodeSaveCode();
         //CalculateVisibleArea();
-        UpdateVisibleHexes();
+        //UpdateVisibleHexes();
     }
 
-    public void DecodeSaveCode(string save_code)
+    public void DecodeSaveCode()
     {
+        string save_code = MainMenu.worldKey;
+        //Debug.Log(save_code);
         seed = int.Parse(save_code.Split('|')[0]);
+        //Debug.Log(save_code+'_'+seed+'=');
         generate_field1.value_tree = int.Parse(save_code.Split('|')[1]);
         generate_field1.value_rock = int.Parse(save_code.Split('|')[2]);
         generate_field1.value_Pb = int.Parse(save_code.Split('|')[3]);
         generate_field1.value_ice = int.Parse(save_code.Split('|')[4]);
         generate_field1.value_water = int.Parse(save_code.Split('|')[5]);
         generate_field1.value_emptiness = int.Parse(save_code.Split('|')[6]);
-        //Debug.Log("Starting game with world key: " + MainMenu.worldKey);
+        
+        seed_text.text = seed.ToString();
+        //SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
+        seed_save.text = SaveCode;
+        Debug.Log("SaveCode:" + SaveCode);
+
+        GenerateFieldWithSeed(seed);
+
+        int count = MainMenu.worldKey.ToString().Count(c => c == ';');
+        for (int i = 1; i<count; i++)
+        {
+            //Debug.Log(save_code.Split(';')[i]);
+            hexGrid[int.Parse(save_code.Split(';')[i].Split('_')[1]), int.Parse(save_code.Split(';')[i].Split('_')[2])] = int.Parse(save_code.Split(';')[i].Split('_')[0]);
+        }
+
+        UpdateSaveCode();
     }
 
     private void UpdateVisibleHexes()
@@ -160,9 +165,13 @@ public class generate_field1 : MonoBehaviour
             int duplicateCount = 0;
 
             // Определяем, сколько раз дублировать в зависимости от имени префаба
-            if (prefab.name.Contains("tile (0)") || (prefab.name.Contains("tile (4)")))
+            if (prefab.name.Contains("tile (0)"))
             {
                 duplicateCount = value_tree + 1;
+            }
+            else if (prefab.name.Contains("tile (4)"))
+            {
+                duplicateCount = (value_tree + 1)*2;
             }
             else if (prefab.name.Contains("tile (1)"))
             {
@@ -232,10 +241,10 @@ public class generate_field1 : MonoBehaviour
         }
     }
 
-    public void SaveAndExit()
+    public void UpdateSaveCode()
     {
         //Debug.Log(hexGrid[0, 0].ToString() + '_' + hexGridEx[0, 0].ToString());
-        SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + '|';
+        SaveCode = seed.ToString() + '|' + value_tree.ToString() + '|' + value_rock.ToString() + '|' + value_Pb.ToString() + '|' + value_ice.ToString() + '|' + value_water.ToString() + '|' + value_emptiness.ToString() + "|;";
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -243,11 +252,7 @@ public class generate_field1 : MonoBehaviour
                 if (hexGrid[x, y]!=hexGridEx[x, y])
                 {
                     SaveCode += hexGrid[x, y].ToString()+'_'+x.ToString()+'_'+y.ToString()+';';
-                    //Debug.Log("SaveCode before update: " + SaveCode);
-                    //Debug.Log(SaveCode);
                 }
-                //Debug.Log("SaveCode before update: " + SaveCode);
-
             }
         }
         seed_save.text = SaveCode;

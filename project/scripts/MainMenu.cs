@@ -102,26 +102,29 @@ public class MainMenu : MonoBehaviour
     public void StartGameWithWorldKey()
     {
         Loading.SetActive(true);
-        Debug.Log(worldKeyInputField.GetParsedText().ToString() != "");
+        //Debug.Log(worldKeyInputField.GetParsedText().ToString() != "");
         if (worldKeyInputField.GetParsedText().ToString() != "")
         {
             worldKey = StringToNumberConverter.ConvertStringToNumbers(worldKeyInputField.text).ToString();
         }
         else
         {
-            worldKey = StringToNumberConverter.ConvertStringToNumbers(UnityEngine.Random.Range(3, 15).ToString()).ToString();
+            worldKey = UnityEngine.Random.Range(-999, 999).ToString();
+            Debug.Log(worldKey + "=-=-=-=-=-=-=-");
         }
-        worldKey+= +'|' + generate_field1.value_tree.ToString() + '|' + generate_field1.value_rock.ToString() + '|' + generate_field1.value_Pb.ToString() + '|' + generate_field1.value_ice.ToString() + '|' + generate_field1.value_water.ToString() + '|' + generate_field1.value_emptiness.ToString() + '|';
-        Debug.Log("Starting game with world key: " + worldKey);
+        Debug.Log(worldKey + "=======");
+        worldKey = worldKey.ToString() +'|' + generate_field1.value_tree.ToString() + '|' + generate_field1.value_rock.ToString() + '|' + generate_field1.value_Pb.ToString() + '|' + generate_field1.value_ice.ToString() + '|' + generate_field1.value_water.ToString() + '|' + generate_field1.value_emptiness.ToString() + "|;";
+        Debug.Log("Starting game with THE WORLD!! key: " + worldKey);
 
         SceneManager.LoadScene("TestPlanet");
     }
 
     public void LoadGame()
     {
+        //Debug.Log("Starting game with THE WORLD!! key: " + worldKey);
         Loading.SetActive(true);
-        //generate_field1.DecodeSaveCode(loadInputField.text);
-
+        worldKey = loadInputField.text;
+        Debug.Log("Starting game with THE WORLD!! key: " + worldKey);
         SceneManager.LoadScene("TestPlanet");
     }
 
