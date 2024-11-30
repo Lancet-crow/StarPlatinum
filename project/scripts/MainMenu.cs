@@ -25,6 +25,7 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<API_manager>().SendRequest("https://2025.nti-gamedev.ru/api/games/744e9e81-85be-4099-883c-e133b28e9a0e/players/", "POST", "{\"key\":\"value\"}");
         ShowMainMenu();
     }
 
