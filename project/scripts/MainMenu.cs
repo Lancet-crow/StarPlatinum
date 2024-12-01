@@ -116,7 +116,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            worldKey = UnityEngine.Random.Range(-999, 999).ToString();
+            worldKey = UnityEngine.Random.Range(-99999, 99999).ToString();
             Debug.Log(worldKey + "=-=-=-=-=-=-=-");
         }
         Debug.Log(worldKey + "=======");

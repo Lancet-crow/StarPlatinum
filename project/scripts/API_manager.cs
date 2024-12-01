@@ -28,16 +28,15 @@ public class API_manager : MonoBehaviour
 
         yield return request.SendWebRequest();
 
-        ret = request.downloadHandler.text;
-
-        Debug.Log(request.downloadHandler.text);
-    }
-    
-    private IEnumerator SendPostRequest()
-    {
-        UnityWebRequest request = UnityWebRequest.PostWwwForm(players, "{\"name\': \'Cyber_Beer_Bear\"");
-
-        yield return request.SendWebRequest();
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Ошибка: " + request.error);
+        }
+        else
+        {
+            ret = request.downloadHandler.text;
+            Debug.Log(request.downloadHandler.text);
+        }
     }
 }
 [System.Serializable]
