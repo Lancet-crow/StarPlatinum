@@ -16,16 +16,18 @@ public class MainMenu : MonoBehaviour
 
     public TextMeshProUGUI worldKeyInputField;
     public TextMeshProUGUI usernameInputField;
+    public TextMeshProUGUI passwordInputField;
     public TextMeshProUGUI loadInputField;
     public Dropdown languageDropdown;
 
     public List<GameObject> scrollbars;
 
     public static string worldKey = "";
+    public static string username = "";
+    public static string password = "";
 
     void Start()
     {
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<API_manager>().SendRequest("https://2025.nti-gamedev.ru/api/games/744e9e81-85be-4099-883c-e133b28e9a0e/players/", "POST", "{\"key\":\"value\"}");
         ShowMainMenu();
     }
 
@@ -59,6 +61,10 @@ public class MainMenu : MonoBehaviour
 
     public void ShowMainMenu()
     {
+        username = usernameInputField.text;
+        password = passwordInputField.text;
+        Debug.Log(username+'+'+ password);
+        if (GameObject.FindGameObjectWithTag("TrueSelect")) GameObject.FindGameObjectWithTag("TrueSelect").GetComponent<SelectSlotSave>().SetFalse();
         if (mainMenuPanel)
         {
             mainMenuPanel.SetActive(true);
@@ -154,5 +160,11 @@ public class MainMenu : MonoBehaviour
     {
         settingsPanel.SetActive(false);
         ShowMainMenu();
+    }
+
+    public void SelectSaveSlot(GameObject slot)
+    {
+        GameObject.FindGameObjectWithTag("TrueSelect").GetComponent<SelectSlotSave>().Selection = slot.transform;
+        GameObject.FindGameObjectWithTag("TrueSelect").GetComponent<SelectSlotSave>().SetPos();
     }
 }
