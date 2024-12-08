@@ -19,7 +19,6 @@ public class StringToNumberConverter
         {
             return UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
-        Debug.Log(input.ToString().Length);
         byte f = 0;
         StringBuilder result = new StringBuilder();
         if (input.ToString() == "")
