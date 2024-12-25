@@ -57,13 +57,14 @@ public class TileComponent : MonoBehaviour
             yield return null; // Ждем следующего кадра
         }
 
-        if (!Select)
+        if (!Select || UIManager.Instance.modeState == UIManager.ModeState.defaultMode)
         {
             if (currentHover != null)
             {
                 GameObject inst = null;
                 if (UIManager.Instance.modeState == UIManager.ModeState.destroyingMode && NewPrefab != null)
                 {
+                    BuildingSystem.Instance.DestroyABuilding(this_transform.gameObject);
                     inst = Instantiate(NewPrefab, this_transform.position, Quaternion.identity, gen.transform);
                 }
                 else if (UIManager.Instance.modeState == UIManager.ModeState.buildingMode)
@@ -72,18 +73,7 @@ public class TileComponent : MonoBehaviour
                 }
                 if (inst != null)
                 {
-                    print(inst.name);
-                    inst.TryGetComponent<TileComponent>(out var tileComponent);
-                    tileComponent.xpos_list = xpos_list;
-                    tileComponent.ypos_list = ypos_list;
-                    //Debug.Log(gen.hexGrid[xpos_list, ypos_list]);
-                    inst.GetComponent<TileComponent>().num = gen.FindIndexByName(inst.name.Replace("(Clone)", ""));
-                    gen.hexGrid[xpos_list, ypos_list] = tileComponent.num;
-                    gen.UpdateSaveCode();
-                    //Debug.Log(gen.hexGrid[xpos_list, ypos_list]);
-                    //GameObject.FindWithTag("Generator").transform;
-                    Destroy(gameObject); //"Ты чево наделал..."  *Он испарился*
-                    currentHover = null; // Сбрасываем ссылку на текущий префаб
+                    DestroyOnTile(inst);
                 }
             }
         }
@@ -96,9 +86,8 @@ public class TileComponent : MonoBehaviour
         }
     }
 
-    public void DestroyOnTile()
+    public void DestroyOnTile(GameObject inst)
     {
-        var inst = Instantiate(NewPrefab, this_transform.position, Quaternion.identity, gen.transform);
         var tileComponent = inst.GetComponent<TileComponent>();
         tileComponent.xpos_list = xpos_list;
         tileComponent.ypos_list = ypos_list;

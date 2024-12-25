@@ -33,7 +33,7 @@ public class ResourceMinerTile : BuildingComponent
         }
         else
         {
-            ResourcedTile.DestroyOnTile();
+            ResourcedTile.DestroyOnTile(gameObject);
         }
     }
 }

@@ -73,6 +73,5 @@ public class BuildingSystem : MonoBehaviour
         building.TryGetComponent<BuildingComponent>(out var component);
         ResourceManager.Instance.FreeWorkers(component.workersAmount);
         component.StopAllCoroutines();
-        Destroy(building);
     }
 }
