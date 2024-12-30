@@ -23,7 +23,7 @@ public class generate_field1 : MonoBehaviour
     public int[,] hexGrid; // Двумерный массив для хранения индексов префабов
     public int[,] hexGridEx; // Двумерный массив для хранения индексов префабов
 
-    public int[,] hexSkinsGrid;
+    public int[,] hexSkinsGrid; // Двумерный массив для хранения индексов скинов построек
 
     public int[,] minimapGrid; // Двумерный массив для хранения индексов префабов для миникарты
 
@@ -329,7 +329,7 @@ public class generate_field1 : MonoBehaviour
         }
     }
 
-    public void CreateMinimapGrid(int [,] minimapGrid)
+    /*public void CreateMinimapGrid(int [,] minimapGrid)
     {
         for (int x = 0; x < width; x++)
         {
@@ -353,7 +353,7 @@ public class generate_field1 : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 
     public void UpdateSaveCode()
     {

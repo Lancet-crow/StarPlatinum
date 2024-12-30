@@ -1,7 +1,9 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Скрипт, обрабатывающий все взаимодействия с ресурсами в игре
+/// </summary>
 public class ResourceManager: MonoBehaviour
 {
     public static ResourceManager Instance { get; private set; }
@@ -16,11 +18,16 @@ public class ResourceManager: MonoBehaviour
             Destroy(gameObject);
         }
         SaveManager.Instance.DecodeResourceString();
+        // Если в сохранении была строка с рабочими, то программа берёт значения рабочих оттуда
         if (SaveManager.Instance.workersState.Count > 0)
         {
             workersAmount = SaveManager.Instance.workersState;
         }
     }
+
+    /// <summary>
+    /// Типы ресурсов в игре
+    /// </summary>
     public enum Resource
     {
         HoneyIngot,
@@ -29,49 +36,77 @@ public class ResourceManager: MonoBehaviour
         Steel,
         Electricity
     }
-
+    /// <summary>
+    /// Хранилище ресурсов, которые есть у игрока
+    /// </summary>
     public SerializedDictionary<Resource, int> resourceStorage;
     
+    /// <summary>
+    /// Состояния рабочих в игре
+    /// </summary>
     public enum WorkerState
     {
         Free,
         Busy
     }
-
+    /// <summary>
+    /// Словарь-хранилище, хранящий количество рабочих, находящихся в одном из игровых состояний
+    /// </summary>
     public SerializedDictionary<WorkerState, int> workersAmount;
 
+    /// <summary>
+    /// Добавляет свободных рабочих в хранилище
+    /// </summary>
+    /// <param name="amount">Количество добавляемых рабочих</param>
     public void AddWorkers(int amount)
     {
         workersAmount[WorkerState.Free] += amount;
         UIManager.Instance.UpdateWorkersText();
     }
-
+    /// <summary>
+    /// Переводит рабочих из "свободного" состояния в "занятое"
+    /// </summary>
+    /// <param name="amount">Количество переводимых рабочих</param>
     public void BusyWorkers(int amount)
     {
         workersAmount[WorkerState.Free] -= amount;
         workersAmount[WorkerState.Busy] += amount;
         UIManager.Instance.UpdateWorkersText();
     }
-
+    /// <summary>
+    /// Переводит рабочих из "занятого" состояния в "свободное"
+    /// </summary>
+    /// <param name="amount">Количество переводимых рабочих</param>
     public void FreeWorkers(int amount)
     {
         workersAmount[WorkerState.Free] += amount;
         workersAmount[WorkerState.Busy] -= amount;
         UIManager.Instance.UpdateWorkersText();
     }
-
+    /// <summary>
+    /// Добавляет количество <paramref name="amount"/> ресурса <paramref name="resource"/> в хранилище <see cref="resourceStorage"/>
+    /// </summary>
+    /// <param name="resource">Тип добавляемого ресурса</param>
+    /// <param name="amount">Количество добавляемого ресурса</param>
     public void AddAmount(Resource resource, int amount)
     {
         resourceStorage[resource] += amount;
         UIManager.Instance.UpdateResourceTexts();
     }
-
+    /// <summary>
+    /// Отнимает количество <paramref name="amount"/> ресурса <paramref name="resource"/> из хранилища <see cref="resourceStorage"/>
+    /// </summary>
+    /// <param name="resource">Тип отнимаемого ресурса</param>
+    /// <param name="amount">Количество отнимаемого ресурса</param>
     public void TakeAmount(Resource resource, int amount)
     {
         resourceStorage[resource] -= amount;
         UIManager.Instance.UpdateResourceTexts();
     }
-
+    /// <summary>
+    /// Вспомогательный метод, позволяющий отнять сразу несколько ресурсов из хранилища за один вызов
+    /// </summary>
+    /// <param name="resourceDictionary"></param>
     public void TakeAmount(Dictionary<Resource, int> resourceDictionary)
     {
         if (HasEnoughResources(resourceDictionary))
@@ -83,6 +118,11 @@ public class ResourceManager: MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Проверяет, есть ли необходимое количество ресурса в хранилище
+    /// </summary>
+    /// <param name="resource">Тип ресурса для проверки</param>
+    /// <param name="amount">Количество ресурса в хранилище</param>
     public bool HasEnoughResources(Resource resource, int amount)
     {
         return resourceStorage[resource] >= amount;
@@ -101,7 +141,10 @@ public class ResourceManager: MonoBehaviour
         }
         return hasEnoughResources;
     }
-
+    /// <summary>
+    /// Проверяет, хватает ли свободных рабочих для установки постройки
+    /// </summary>
+    /// <param name="buildingComponent">Компонент постройки, которая должна быть установлена</param>
     public bool HasEnoughWorkers(BuildingComponent buildingComponent)
     {
         return workersAmount[WorkerState.Free] >= buildingComponent.workersAmount;

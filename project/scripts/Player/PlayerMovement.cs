@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        // Определяем направление движения
+        // Определяем направление движения и нормализуем вектор, чтобы избежать ускорения игрока при движении по диагонали
         moveDirection = new Vector2(horizontal, vertical).normalized;
 
         // Проверяем, можем ли мы двигаться в заданном направлении
@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
         // Проверяем, находится ли новая позиция на проходимом гексе
         if (IsWalkable(newPosition))
         {
+            // Если персонаж движется влево, то разворачиваем его, если вправо - возвращаем в исходное состояние
             if (newPosition.x - transform.position.x < 0) {
                 Sprite.flipX = true;
             }

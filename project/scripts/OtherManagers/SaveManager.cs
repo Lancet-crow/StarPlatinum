@@ -23,6 +23,20 @@ public class SaveManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Записывает все необходимые значения в файл сохранения.
+	/// <list type="bullet">
+	/// <listheader>Сохраняемые значения:</listheader>
+	/// <item>Сид мира и изменённые тайлы в нём (<see cref="saveCode"/>)</item>
+	/// <item>Строка ресурсов игрока в мире (<see cref="EncodeResourceString"/>)</item>
+	/// <item>Строка состояния рабочих(свободных и занятых) (<see cref="ResourceManager.workersAmount"/>)</item>
+	/// <item>Строка с количеством различных построек в мире (<see cref="BuildingSystem.buildingAmounts"/>)</item>
+	/// </list>
+	/// </summary>
+	/// <remarks>
+	/// Если файл уже существует, он перезаписывается заново
+	/// </remarks>
+	/// <param name="id">Номер, под которым будет сохранён файл(стандарт: номер слота сохранения)</param>
 	public void SaveFile(int id)
 	{
 		string destination = Application.persistentDataPath + $"/save{id}.dat";
@@ -34,7 +48,10 @@ public class SaveManager : MonoBehaviour
 		sw.WriteLine(howManyBuildings);
 		sw.Close();
     }
-
+	/// <summary>
+	/// Загружает файл необходимого сохранения и расшифровывает его в переменные. Все переменные, сохраняемые в файл, смотреть тут: <seealso cref="SaveFile"/>
+	/// </summary>
+	/// <param name="id">Номер, по которому будет искаться файл(стандарт: номер слота сохранения)</param>
 	public void LoadFile(int id)
 	{
 		string destination = Application.persistentDataPath +  $"/save{id}.dat";
@@ -56,7 +73,11 @@ public class SaveManager : MonoBehaviour
 			sr.Close();
 		}
 	}
-
+	/// <summary>
+	/// Удаляет файл сохранения под номером <paramref name="id"/>.
+	/// <para>Если ID сохранения не был указан, или файла с таким ID не существует, программа запишет в логи соответствующий Warning.</para>
+	/// </summary>
+	/// <param name="id">Номер, по которому будет искаться файл(стандарт: номер слота сохранения). По умолчанию равен -1, для предотвращения случайных удалений</param>
 	public void DeleteFile(int id = -1)
     {
 		if (id == -1)
@@ -82,6 +103,28 @@ public class SaveManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Очищает все переменные для создания нового сохранения.
+	/// <list type="bullet">
+	/// <listheader>Очищаемые переменные:</listheader>
+	/// <item><see cref="saveCode"/></item>
+	/// <item><see cref="resourceString"/></item>
+	/// <item><see cref="howManyBuildingsString"/></item>
+	/// <item><see cref="workersState"/></item>
+	/// </list>
+	/// </summary>
+	public void ClearAllVariables()
+    {
+		howManyBuildingsString = null;
+		resourceString = "";
+		saveCode = "";
+		workersState = new();
+	}
+
+	/// <summary>
+	/// Преобразует значения переменных ресурсов игрока, хранящихся в <see cref="ResourceManager"/>, в строку для последующего сохранения
+	/// </summary>
+	/// <returns>Строка со значениями ресурсов игрока</returns>
 	public string EncodeResourceString()
     {
 		string resourceString = "";
@@ -92,6 +135,9 @@ public class SaveManager : MonoBehaviour
 		return resourceString;
     }
 
+	/// <summary>
+	/// Преобразует <see cref="resourceString"/> в значения переменных <see cref="ResourceManager"/> для дальнейшего использования
+	/// </summary>
 	public void DecodeResourceString()
     {
 		if (resourceString.Length > 0)

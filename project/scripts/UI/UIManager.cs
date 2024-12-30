@@ -11,16 +11,36 @@ public class UIManager : MonoBehaviour
     public GameObject buildingPanel;
     public GameObject finalPanel;
 
+    /// <summary>
+    /// Переменная, которая содержит тип постройки, выбранный игроком в режиме строительства
+    /// <para>Используется для вызова <see cref="BuildingSystem.PlaceABuilding(BuildingSystem.BuildingType?, GameObject)"/></para>
+    /// </summary>
     public BuildingSystem.BuildingType? currentBuildingTypeChoice = null;
+    /// <summary>
+    /// Режимы игры, которые доступны игроку:
+    /// <list type="bullet">
+    /// <item>defaultMode - стандартный режим, нельзя ни разрушать, ни устанавливать постройки. Все функции, доступные в defaultMode, сохраняются в других режимах.</item>
+    /// <item>buildingMode - режим строительства. Открывает панель строительства и возможность ставить постройки.</item>
+    /// <item>destroyingMode - режим разрушения. Позволяет уничтожать постройки.</item>
+    /// </list>
+    /// </summary>
     public enum ModeState
     {
         defaultMode,
         buildingMode,
         destroyingMode
     }
+    /// <summary>
+    /// Переменная, хранящая режим игры, действующий в данный момент
+    /// </summary>
     public ModeState modeState;
-
+    /// <summary>
+    /// Словарь, хранящий текстовые поля на главной панели для выбранных ресурсов
+    /// </summary>
     [SerializeField] private SerializedDictionary<ResourceManager.Resource, TMPro.TextMeshProUGUI> resourceTexts;
+    /// <summary>
+    /// Словарь, хранящий любые текстовые поля. К ним можно получить доступ по ключу-строке
+    /// </summary>
     [SerializeField] private SerializedDictionary<string, TMPro.TextMeshProUGUI> otherTexts;
 
     public static UIManager Instance { get; private set; }
@@ -43,9 +63,9 @@ public class UIManager : MonoBehaviour
         UpdateWorkersText();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Открыть меню паузы, если оно ещё не открыто и нажата кнопка Esc
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!pauseMenu.activeInHierarchy)
@@ -57,7 +77,16 @@ public class UIManager : MonoBehaviour
                 ClosePauseMenu();
             }
         }
-        if (ResourceManager.Instance.resourceStorage[ResourceManager.Resource.Electricity] > 100 && 
+        CheckFinaleConditions();
+    }
+
+
+    /// <summary>
+    /// Запускает финал игры, если соблюдены все условия
+    /// </summary>
+    public void  CheckFinaleConditions()
+    {
+        if (ResourceManager.Instance.resourceStorage[ResourceManager.Resource.Electricity] > 100 &&
             BuildingSystem.Instance.buildingAmounts[BuildingSystem.BuildingType.LivingHouse] > 40 &&
             !finalPanel.activeInHierarchy)
         {
@@ -70,10 +99,18 @@ public class UIManager : MonoBehaviour
         generate_field1.Instance.SaveAndExit();
     }
 
+    /// <summary>
+    /// Закрепляет выбор постройки типа <paramref name="buildingType"/> в специальную переменную для дальнейшего её использования
+    /// <param name="buildingType">Тип выбранной постройки</param>
     public void SetCurrentBuildingTypeChoice(BuildingSystem.BuildingType buildingType)
     {
         currentBuildingTypeChoice = buildingType;
     }
+    /// <summary>
+    /// Вспомогательный метод для <see cref="SetCurrentBuildingTypeChoice(BuildingSystem.BuildingType)"/>
+    /// <para>Принимает вместо <see cref="BuildingSystem.BuildingType"/> строку с тем же значением</para>
+    /// </summary>
+    /// <param name="buildingTypeString">Строка с выбранным типом постройки. Должна совпадать со значением в <see cref="BuildingSystem.BuildingType"/></param>
     public void SetCurrentBuildingTypeChoice(string buildingTypeString)
     {
         var buildingType = (BuildingSystem.BuildingType)System.Enum.Parse(typeof(BuildingSystem.BuildingType), buildingTypeString);
@@ -85,6 +122,10 @@ public class UIManager : MonoBehaviour
         SetCurrentBuildingTypeChoice(buildingType);
     }
 
+    /// <summary>
+    /// Устанавливает режим игры, в котором игрок находится
+    /// </summary>
+    /// <param name="mode">Режим игры, который будет установлен для игрока</param>
     public void ChangeModeState(ModeState mode)
     {
         modeState = mode != modeState ? mode : ModeState.defaultMode; // Если этот режим уже включён, то вернуться к дефолтному
@@ -103,12 +144,18 @@ public class UIManager : MonoBehaviour
         ChangeModeState(mode);
     }
 
+    /// <summary>
+    /// Реагирует на изменения <see cref="modeState"/> соответствующими действиями
+    /// </summary>
     public void ReactToModeStateChange()
     {
         buildingPanel.SetActive(modeState == ModeState.buildingMode);
         currentBuildingTypeChoice = null;
     }
 
+    /// <summary>
+    /// Обновляет значения ресурсов на главной панели
+    /// </summary>
     public void UpdateResourceTexts()
     {
         foreach (KeyValuePair<ResourceManager.Resource, TMPro.TextMeshProUGUI> keyValuePair in resourceTexts)
@@ -117,11 +164,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// <i><b>DEPRECATED. Нигде не используется.</b></i>
+    /// Обновляет значение количества домов на панели
+    /// </summary>
     public void UpdateHousesAmountText()
     {
         otherTexts["housesAmountText"].text = BuildingSystem.Instance.buildingAmounts[BuildingSystem.BuildingType.LivingHouse].ToString();
     }
 
+    /// <summary>
+    /// Обновляет значения рабочих на главной панели
+    /// </summary>
     public void UpdateWorkersText()
     {
         otherTexts["allWorkersText"].text = ResourceManager.Instance.workersAmount.Sum(x => x.Value).ToString();

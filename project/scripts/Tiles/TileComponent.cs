@@ -1,7 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Класс, содержащий все параметры тайла
+/// </summary>
 public class TileComponent : MonoBehaviour
 {
     public GameObject hoverPrefab; // Префаб, который будет отображаться при наведении
@@ -85,7 +86,10 @@ public class TileComponent : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Заменяет тайл на новый(<paramref name="inst"/>)
+    /// </summary>
+    /// <param name="inst"></param>
     public void DestroyOnTile(GameObject inst)
     {
         var tileComponent = inst.GetComponent<TileComponent>();
