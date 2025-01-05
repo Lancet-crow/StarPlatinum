@@ -218,4 +218,4 @@ MonoBehaviour:
   possibleSpritesList: []
   resourceToMine: 0
   miningSpeed: 1.5
-  timeToMineResource: 0
+  resourceMinedAtOnce: 5

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UIManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public GameObject pauseMenu;
     public GameObject minimapPanel;
@@ -17,24 +17,6 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public BuildingSystem.BuildingType? currentBuildingTypeChoice = null;
     /// <summary>
-    /// Режимы игры, которые доступны игроку:
-    /// <list type="bullet">
-    /// <item>defaultMode - стандартный режим, нельзя ни разрушать, ни устанавливать постройки. Все функции, доступные в defaultMode, сохраняются в других режимах.</item>
-    /// <item>buildingMode - режим строительства. Открывает панель строительства и возможность ставить постройки.</item>
-    /// <item>destroyingMode - режим разрушения. Позволяет уничтожать постройки.</item>
-    /// </list>
-    /// </summary>
-    public enum ModeState
-    {
-        defaultMode,
-        buildingMode,
-        destroyingMode
-    }
-    /// <summary>
-    /// Переменная, хранящая режим игры, действующий в данный момент
-    /// </summary>
-    public ModeState modeState;
-    /// <summary>
     /// Словарь, хранящий текстовые поля на главной панели для выбранных ресурсов
     /// </summary>
     [SerializeField] private SerializedDictionary<ResourceManager.Resource, TMPro.TextMeshProUGUI> resourceTexts;
@@ -43,7 +25,9 @@ public class UIManager : MonoBehaviour
     /// </summary>
     [SerializeField] private SerializedDictionary<string, TMPro.TextMeshProUGUI> otherTexts;
 
-    public static UIManager Instance { get; private set; }
+    [SerializeReference] public IPlayerState currentGameMode;
+
+    public static GameManager Instance { get; private set; }
     private void Awake()
     {
         if (Instance == null)
@@ -54,6 +38,7 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        currentGameMode = new NormalMode();
     }
 
     private void Start()
@@ -63,8 +48,24 @@ public class UIManager : MonoBehaviour
         UpdateWorkersText();
     }
 
+    public void ChangeGameMode(IPlayerState newGameMode)
+    {
+        currentGameMode?.Exit();
+        currentGameMode = newGameMode;
+        currentGameMode?.Enter();
+    }
+    public void ChangeGameMode(string newGameModeString)
+    {
+        System.Type newGMType = TypeSearcher.FindType(newGameModeString);
+        var newGameMode = (IPlayerState)System.Activator.CreateInstance(newGMType);
+        ChangeGameMode(newGameMode);
+    }
+
     void Update()
     {
+        // Обработка событий внутри режима
+        currentGameMode?.HandleInput();
+        currentGameMode?.Update();
         // Открыть меню паузы, если оно ещё не открыто и нажата кнопка Esc
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -77,6 +78,7 @@ public class UIManager : MonoBehaviour
                 ClosePauseMenu();
             }
         }
+        // Проверка условий для финала
         CheckFinaleConditions();
     }
 
@@ -120,37 +122,6 @@ public class UIManager : MonoBehaviour
     {
         var buildingType = (BuildingSystem.BuildingType)buildingTypeInt;
         SetCurrentBuildingTypeChoice(buildingType);
-    }
-
-    /// <summary>
-    /// Устанавливает режим игры, в котором игрок находится
-    /// </summary>
-    /// <param name="mode">Режим игры, который будет установлен для игрока</param>
-    public void ChangeModeState(ModeState mode)
-    {
-        modeState = mode != modeState ? mode : ModeState.defaultMode; // Если этот режим уже включён, то вернуться к дефолтному
-        ReactToModeStateChange();
-    }
-
-    public void ChangeModeState(string modeString)
-    {
-        var mode = (ModeState)System.Enum.Parse(typeof(ModeState), modeString);
-        ChangeModeState(mode);
-    }
-
-    public void ChangeModeState(int modeInt)
-    {
-        var mode = (ModeState)modeInt;
-        ChangeModeState(mode);
-    }
-
-    /// <summary>
-    /// Реагирует на изменения <see cref="modeState"/> соответствующими действиями
-    /// </summary>
-    public void ReactToModeStateChange()
-    {
-        buildingPanel.SetActive(modeState == ModeState.buildingMode);
-        currentBuildingTypeChoice = null;
     }
 
     /// <summary>

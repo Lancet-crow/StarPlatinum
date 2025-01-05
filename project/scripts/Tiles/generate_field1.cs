@@ -143,7 +143,7 @@ public class generate_field1 : MonoBehaviour
     {
         SaveManager.Instance.saveCode = SaveCode;
         SaveManager.Instance.SaveFile(MainMenu.newSaveID);
-        UIManager.Instance.ExitToMainMenu();
+        GameManager.Instance.ExitToMainMenu();
     }
 
     private void UpdateVisibleHexes()

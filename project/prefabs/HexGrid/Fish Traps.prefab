@@ -133,7 +133,7 @@ MonoBehaviour:
   possibleSpritesList: []
   resourceToMine: 1
   miningSpeed: 1.5
-  timeToMineResource: 0
+  resourceMinedAtOnce: 5
 --- !u!1 &2590787928965069506
 GameObject:
   m_ObjectHideFlags: 0

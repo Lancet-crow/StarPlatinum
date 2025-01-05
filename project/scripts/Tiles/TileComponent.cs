@@ -57,32 +57,32 @@ public class TileComponent : MonoBehaviour
         {
             yield return null; // ∆дем следующего кадра
         }
-
-        if (!Select || UIManager.Instance.modeState == UIManager.ModeState.defaultMode)
+        if (currentHover != null)
         {
-            if (currentHover != null)
+            if (Select)
+            {
+                camera.ReplasePrefab = NewPrefab;
+            }
+            else
             {
                 GameObject inst = null;
-                if (UIManager.Instance.modeState == UIManager.ModeState.destroyingMode && NewPrefab != null)
+                switch (GameManager.Instance.currentGameMode)
                 {
-                    BuildingSystem.Instance.DestroyABuilding(this_transform.gameObject);
-                    inst = Instantiate(NewPrefab, this_transform.position, Quaternion.identity, gen.transform);
-                }
-                else if (UIManager.Instance.modeState == UIManager.ModeState.buildingMode)
-                {
-                    inst = BuildingSystem.Instance.PlaceABuilding(UIManager.Instance.currentBuildingTypeChoice, this_transform.gameObject);
+                    case BuildingMode:
+                        inst = BuildingSystem.Instance.PlaceABuilding(GameManager.Instance.currentBuildingTypeChoice, this_transform.gameObject);
+                        break;
+                    case DestroyingMode:
+                        if (NewPrefab != null)
+                        {
+                            BuildingSystem.Instance.DestroyABuilding(this_transform.gameObject);
+                            inst = Instantiate(NewPrefab, this_transform.position, Quaternion.identity, gen.transform);
+                        }
+                        break;
                 }
                 if (inst != null)
                 {
                     DestroyOnTile(inst);
                 }
-            }
-        }
-        else
-        {
-            if (currentHover != null)
-            {
-                camera.ReplasePrefab = NewPrefab;
             }
         }
     }

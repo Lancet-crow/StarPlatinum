@@ -61,7 +61,7 @@ public class ResourceManager: MonoBehaviour
     public void AddWorkers(int amount)
     {
         workersAmount[WorkerState.Free] += amount;
-        UIManager.Instance.UpdateWorkersText();
+        GameManager.Instance.UpdateWorkersText();
     }
     /// <summary>
     /// ѕереводит рабочих из "свободного" состо€ни€ в "зан€тое"
@@ -71,7 +71,7 @@ public class ResourceManager: MonoBehaviour
     {
         workersAmount[WorkerState.Free] -= amount;
         workersAmount[WorkerState.Busy] += amount;
-        UIManager.Instance.UpdateWorkersText();
+        GameManager.Instance.UpdateWorkersText();
     }
     /// <summary>
     /// ѕереводит рабочих из "зан€того" состо€ни€ в "свободное"
@@ -81,7 +81,7 @@ public class ResourceManager: MonoBehaviour
     {
         workersAmount[WorkerState.Free] += amount;
         workersAmount[WorkerState.Busy] -= amount;
-        UIManager.Instance.UpdateWorkersText();
+        GameManager.Instance.UpdateWorkersText();
     }
     /// <summary>
     /// ƒобавл€ет количество <paramref name="amount"/> ресурса <paramref name="resource"/> в хранилище <see cref="resourceStorage"/>
@@ -91,7 +91,7 @@ public class ResourceManager: MonoBehaviour
     public void AddAmount(Resource resource, int amount)
     {
         resourceStorage[resource] += amount;
-        UIManager.Instance.UpdateResourceTexts();
+        GameManager.Instance.UpdateResourceTexts();
     }
     /// <summary>
     /// ќтнимает количество <paramref name="amount"/> ресурса <paramref name="resource"/> из хранилища <see cref="resourceStorage"/>
@@ -101,7 +101,7 @@ public class ResourceManager: MonoBehaviour
     public void TakeAmount(Resource resource, int amount)
     {
         resourceStorage[resource] -= amount;
-        UIManager.Instance.UpdateResourceTexts();
+        GameManager.Instance.UpdateResourceTexts();
     }
     /// <summary>
     /// ¬спомогательный метод, позвол€ющий отн€ть сразу несколько ресурсов из хранилища за один вызов

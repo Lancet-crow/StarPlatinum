@@ -112,8 +112,9 @@ public class BuildingSystem : MonoBehaviour
     /// <param name="building">Тайл постройки, которая будет уничтожена.</param>
     public void DestroyABuilding(GameObject building)
     {
-        building.TryGetComponent<BuildingComponent>(out var component);
-        ResourceManager.Instance.FreeWorkers(component.workersAmount);
-        component.StopAllCoroutines();
+        if (building.TryGetComponent<BuildingComponent>(out var component)) {
+            ResourceManager.Instance.FreeWorkers(component.workersAmount);
+            component.StopAllCoroutines();
+        };
     }
 }

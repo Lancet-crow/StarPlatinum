@@ -2843,7 +2843,7 @@ GameObject:
   - component: {fileID: 612419212}
   - component: {fileID: 612419213}
   m_Layer: 2
-  m_Name: UIManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2899,6 +2899,13 @@ MonoBehaviour:
       Value: {fileID: 1303883984}
     - Key: freeWorkersText
       Value: {fileID: 1450145810}
+  currentGameMode:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!1 &720600444
 GameObject:
   m_ObjectHideFlags: 0
@@ -3604,8 +3611,8 @@ Transform:
   - {fileID: 1765749177}
   - {fileID: 893145147}
   - {fileID: 410333626}
-  - {fileID: 1384697593}
   - {fileID: 612419212}
+  - {fileID: 1384697593}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1026963935
@@ -3919,15 +3926,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 612419213}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: ChangeModeState
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ChangeGameMode
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: buildingMode
+          m_StringArgument: BuildingMode
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1066122491
@@ -5244,15 +5251,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 612419213}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: ChangeModeState
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ChangeGameMode
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: destroyingMode
+          m_StringArgument: DestroyingMode
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1375613608
